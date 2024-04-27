@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="This is a Pomodoro timer application for better productivity .">
+    <meta name="keywords" content="Pomodoro, timer, productivity">
+    <meta name="author" content="Carlitos Dummy">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="icon" href="../images/icon.png">
+    <link rel="stylesheet" href="./style.css">
+    <title>Pomodoro</title>
+</head>
+
+<body>
+    <main>
+        <h1 class="title">POMODORO</h1>
+        <section class="quick-options">
+            <h2 class="qo-pomodoro option-selected">pomodoro</h2>
+            <h2 class="qo-short-bk">short break</h2>
+            <h2 class="qo-large-bk">large break</h2>
+        </section>
+
+        <section class="timer">
+            <div class="inner-timer">
+                <h3 id="time">00:00</h3>
+            </div>
+
+            <div class="outer"></div>
+            <section class="sphere"></section>
+        </section>
+        
+        <button class="play-pause">PLAY</button>
+        <img src="../images/settings.png" class="settings-icon" alt="">
+
+        <section class="settings">
+            <img class="close-settings" src="../images/close.png" alt="">
+            <h4 class="title-settings">Settings</h4>
+            <section>
+                <h5 class="subtitle-settings">TIME (MINUTES)</h5>
+                <label>
+                    pomodoro:
+                    <input required id="pomodoro-input" type="number" placeholder="25" value="25">
+                </label>
+                <label>
+                    short break:
+                    <input id="short-bk-input" type="number" placeholder="5" value="5">
+                </label>
+                <label>
+                    large break:
+                    <input id="large-bk-input" type="number" placeholder="15" value="15">
+                </label>
+                <button class="apply-settings">APPLY</button>
+            </section>
+        </section>
+
+    </main>
+    <script src="./script.js"></script>
+</body>
+
+</html>
