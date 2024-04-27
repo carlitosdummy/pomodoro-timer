@@ -6,16 +6,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //! Finish time audio
     //todo: select user audio from the settings, for now, it's a default audio
-    //todo: change the volume of the audio in the settings
     const finishTime = new Audio('../sounds/finish_time.mp3');
     finishTime.volume = 0.3;
     
     //! Quick options
-    //todo: add a slice effect to change between the options
     let $quickOptions = $('.quick-options');
     let $pomodoroButton = $('.qo-pomodoro');
     let $shortBreakButton = $('.qo-short-bk');
     let $largeBreakButton = $('.qo-large-bk');
+    let $sliderOptions = $('.curr-selected');
+
+    const BEGIN_POMODORO = 0
+    const BEGIN_SHORT_BREAK = 154
+    const BEGIN_LARGE_BREAK = 308
 
     //! Default time for pomodoro, short break and large break
     //todo: save the settings in the local storage
@@ -99,17 +102,27 @@ document.addEventListener('DOMContentLoaded', () => {
     //? Pomodoro button
     $pomodoroButton.addEventListener('click', () => {
         selectCurrentOption($currentOption, $pomodoroButton)
+        moveSliderToCurrentOption()
     });
 
     //? Short break button
     $shortBreakButton.addEventListener('click', () => {
         selectCurrentOption($currentOption, $shortBreakButton)
+        moveSliderToCurrentOption()
     });
 
     //? Large break button
     $largeBreakButton.addEventListener('click', () => {
         selectCurrentOption($currentOption, $largeBreakButton)
+        moveSliderToCurrentOption()
     });
+
+    //? Move the slider to the current option
+    function moveSliderToCurrentOption() {
+        if ($currentOption.classList.contains('qo-pomodoro')) $sliderOptions.style.transform = `translateX(${BEGIN_POMODORO}px)`;
+        else if ($currentOption.classList.contains('qo-short-bk')) $sliderOptions.style.transform = `translateX(${BEGIN_SHORT_BREAK}px)`;
+        else $sliderOptions.style.transform = `translateX(${BEGIN_LARGE_BREAK}px)`;
+    }
 
     //$ Timer
     //? Set the default time in the timer function
