@@ -57,6 +57,7 @@ main {
         width: 500px;
         height: 60px;
         padding-inline: 20px;
+        z-index: 1;
 
         & h2 {
             cursor: pointer;
@@ -145,7 +146,7 @@ main {
 
     & .settings {
         width: 500px;
-        height: 460px;
+        height: 600px;
         border-radius: 10px;
         background: #74a7aa;
         position: absolute;
@@ -155,6 +156,7 @@ main {
         gap: 20px;
         padding: 20px 50px;
         color: var(--white);
+        
 
         & .close-settings {
             width: 45px;
@@ -163,6 +165,29 @@ main {
             right: 10px;
             filter: invert(18%) sepia(46%) saturate(6503%) hue-rotate(29deg) brightness(96%) contrast(98%);
             cursor: pointer;
+        }
+
+        & .volume{
+            width: 100%;
+            text-align: center;
+            border-top: 3px solid var(--white);
+            padding-top: 15px;
+        }
+        & div {
+            width: 70%;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            & .volume-input {
+                width: 100%;
+                accent-color: var(--black);
+            }
+            
+            & p {
+                font-size: 2rem;
+                color: var(--black);
+            }
         }
 
         & .title-settings {
@@ -197,8 +222,8 @@ main {
                     width: 120px;
                     height: 50px;
                     padding-left: 10px;
+                    text-align: center;
                 }
-
             }
 
             & .apply-settings {
@@ -211,7 +236,6 @@ main {
                 color: var(--white);
                 transition: background 300ms ease;
                 cursor: pointer;
-
             }
 
             & .applied-stg {

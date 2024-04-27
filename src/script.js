@@ -5,24 +5,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const $ = (selector) => document.querySelector(selector);
 
     //! Finish time audio
+    //todo: select user audio from the settings, for now, it's a default audio
+    //todo: change the volume of the audio in the settings
     const finishTime = new Audio('../sounds/finish_time.mp3');
     finishTime.volume = 0.3;
     
     //! Quick options
+    //todo: add a slice effect to change between the options
+    let $quickOptions = $('.quick-options');
     let $pomodoroButton = $('.qo-pomodoro');
     let $shortBreakButton = $('.qo-short-bk');
     let $largeBreakButton = $('.qo-large-bk');
 
     //! Default time for pomodoro, short break and large break
-    let defaultTimePomodoro = $('#pomodoro-input').value * 60;
-    let defaultTimeShortBreak = $('#short-bk-input').value * 60;
-    let defaultTimeLargeBreak = $('#large-bk-input').value * 60;
+    //todo: save the settings in the local storage
+    //todo: chech if the user's input is a number and if it's not a number, show a message to the user
+    let defaultTimePomodoro
+    let defaultTimeShortBreak
+    let defaultTimeLargeBreak
+    getSetInputValue()
     
     //! Pomodoro
-    let $playButton = $('.play-pause');
+    let $title = $('.title');
+    let $currentOption = $('.option-selected');
+    let $timerContainer = $('.timer')
+    let $timer = $('#time');
     let $outerSphere = $('.outer');
     let $sphere = $('.sphere');
-    let $timer = $('#time');
+    let $playButton = $('.play-pause');
     let timeLeft = defaultTimePomodoro;
     let isRunning = false;
     let idAudio;
@@ -32,56 +42,73 @@ document.addEventListener('DOMContentLoaded', () => {
     let $settingsButton = $('.settings-icon');
     let $applySettings = $('.apply-settings');
 
-    // ? show settings and blur other elements
+    //! Volumen settings
+    let $inputVolume = $('.volume-input');
+    let $showVolume = $('.show-volume');
+
+    //! Blur elements 
+    let blueElements = [$title, $quickOptions, $timerContainer, $playButton, $settingsButton];
+
+    //? show settings and blur other elements
     $settingsButton.addEventListener('click', () => {
         $('.settings').style.opacity = 1;
-        blurEelem();
+        $('.settings').style.zIndex= 1;
+        blueOrUnblur(blueElements, 'add');
 
         $('.close-settings').addEventListener('click', () => {
             $('.settings').style.opacity = 0;
+            $('.settings').style.zIndex= 0;
             $applySettings.classList.remove('applied-stg');
-            undoBlurEelem();
+            blueOrUnblur(blueElements, 'remove');
         })
+    });
+
+    //? get the user's input 
+    function getSetInputValue() {
+        defaultTimePomodoro = $('#pomodoro-input').value * 60;
+        defaultTimeShortBreak = $('#short-bk-input').value * 60;
+        defaultTimeLargeBreak = $('#large-bk-input').value * 60;
+    }
+
+    //? change and show the volume of the audio
+    $inputVolume.addEventListener('input', () => {
+        finishTime.volume = $inputVolume.value / 100;
+        $showVolume.textContent = $inputVolume.value
     });
 
     //? apply settings
     $applySettings.addEventListener('click', () => {
-        defaultTimePomodoro = $('#pomodoro-input').value * 60;
-        defaultTimeShortBreak = $('#short-bk-input').value * 60;
-        defaultTimeLargeBreak = $('#large-bk-input').value * 60;
+        getSetInputValue();
         $applySettings.classList.add('applied-stg');
         resetTimer()
     });
 
     //$ Quick options
+    //? Select the current option and update the time in the timer
+    function selectCurrentOption(currentOption, newOption) {
+        if (isRunning) return;
+        newOption.classList.add('option-selected');
+        currentOption.classList.remove('option-selected');
+        $currentOption = newOption
+        if (newOption.classList.contains('qo-pomodoro')) timeLeft = defaultTimePomodoro;
+        else if (newOption.classList.contains('qo-short-bk')) timeLeft = defaultTimeShortBreak;
+        else timeLeft = defaultTimeLargeBreak;
+        setTimeInTimer()
+    }
+
     //? Pomodoro button
     $pomodoroButton.addEventListener('click', () => {
-        if (isRunning) return;
-        $pomodoroButton.classList.add('option-selected');
-        $shortBreakButton.classList.remove('option-selected');
-        $largeBreakButton.classList.remove('option-selected');
-        timeLeft = defaultTimePomodoro;
-        setTimeInTimer()
+        selectCurrentOption($currentOption, $pomodoroButton)
     });
 
     //? Short break button
     $shortBreakButton.addEventListener('click', () => {
-        if (isRunning) return;
-        $shortBreakButton.classList.add('option-selected');
-        $pomodoroButton.classList.remove('option-selected');
-        $largeBreakButton.classList.remove('option-selected');
-        timeLeft = defaultTimeShortBreak;
-        setTimeInTimer()
+        selectCurrentOption($currentOption, $shortBreakButton)
     });
 
     //? Large break button
     $largeBreakButton.addEventListener('click', () => {
-        if (isRunning) return;
-        $largeBreakButton.classList.add('option-selected');
-        $pomodoroButton.classList.remove('option-selected');
-        $shortBreakButton.classList.remove('option-selected');
-        timeLeft = defaultTimeLargeBreak;
-        setTimeInTimer()
+        selectCurrentOption($currentOption, $largeBreakButton)
     });
 
     //$ Timer
@@ -89,9 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setTimeInTimer() {
         const minutes = Math.floor(timeLeft / 60);
         let seconds = timeLeft % 60;
-
         const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
         $timer.textContent = formattedTime;
     }
 
@@ -103,6 +128,8 @@ document.addEventListener('DOMContentLoaded', () => {
             $outerSphere.classList.add('normal-blink');
             startTimer()
         }else if ($playButton.textContent === 'PAUSE') {
+            //todo: add a pause function
+            console.log('pause');
             $playButton.textContent = 'PLAY';
             $playButton.style.backgroundColor = '#45858896';
         } else {
@@ -116,23 +143,23 @@ document.addEventListener('DOMContentLoaded', () => {
     //? starTimer function 
     function startTimer() {
         isRunning = true
-        updateTimer()
         $sphere.style.animation = `rotation ${timeLeft}s linear infinite`;
         $sphere.style.animationPlayState = 'running';
+        updateTimer()
         timerInterval = setInterval(updateTimer, 1000);
     }
 
     //? stopTimer function
     function stopTimer() {
+        clearInterval(timerInterval);
         finishTime.play();
+        idAudio = createTimerInterval();
         $sphere.style.animationPlayState = 'paused';
         $outerSphere.classList.add('quick-blink');
         $outerSphere.classList.remove('normal-blink');
-        clearInterval(timerInterval);
         $playButton.textContent = 'RESET';
         $playButton.style.backgroundColor = '#af3a03';
         $playButton.style.color = '#f9f5d7';
-        idAudio = createTimerInterval();
     }
 
     //? updateTimer function
@@ -142,45 +169,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (timeLeft < 0) stopTimer();
     }
 
-    //? blur elements function
-    function blurEelem() {
-        $('.title').classList.add('blur');
-        $('.quick-options').classList.add('blur');
-        $('.timer').classList.add('blur');
-        $('.settings-icon').classList.add('blur');
-        $('.play-pause').classList.add('blur');
-    }
-
-    //? undo blur elements function
-    function undoBlurEelem() {
-        $('.title').classList.remove('blur');
-        $('.quick-options').classList.remove('blur');
-        $('.timer').classList.remove('blur');
-        $('.settings-icon').classList.remove('blur');
-        $('.play-pause').classList.remove('blur');
-    }
+    //? blueOrUnblur function
+    const blueOrUnblur = (elements, action) => elements.forEach(element => element.classList[action]('blur'));
 
     //? reset timer function using the current state of the timer
     function resetTimer() {
-        let nextTime;
-        if ($pomodoroButton.classList.contains('option-selected')) nextTime = defaultTimePomodoro;
-        else if ($shortBreakButton.classList.contains('option-selected')) nextTime = defaultTimeShortBreak;
-        else if ($largeBreakButton.classList.contains('option-selected')) nextTime = defaultTimeLargeBreak;
-        timeLeft = nextTime;
+        if ($currentOption.classList.contains('qo-pomodoro')) timeLeft = defaultTimePomodoro;
+        else if ($currentOption.classList.contains('qo-short-bk')) timeLeft = defaultTimeShortBreak;
+        else timeLeft = defaultTimeLargeBreak;
         isRunning = false;
         setTimeInTimer()
         cancelTimerInterval()
     }
     
     //? create the timer interval
-    function createTimerInterval() {
-        return setInterval(() => finishTime.play(), 6000);
-    }
+    const createTimerInterval = () => setInterval(() => finishTime.play(), 6000);
 
     //? cancel the timer interval
     function cancelTimerInterval() {
         finishTime.pause();
         clearInterval(idAudio);
     }
-
 });
