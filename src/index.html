@@ -44,16 +44,19 @@
                 <h5 class="subtitle-settings">TIME (MINUTES)</h5>
                 <label>
                     pomodoro:
-                    <input required id="pomodoro-input" type="number" placeholder="25" value="25">
+                    <input required id="pomodoro-input" type="number" placeholder="30" value="30" min="1" max="180">
                 </label>
+                <small>min. value: 1 / max. value: 180</small>
                 <label>
                     short break:
-                    <input id="short-bk-input" type="number" placeholder="5" value="5">
+                    <input id="short-bk-input" type="number" placeholder="5" value="5" min="1" max="30">
                 </label>
+                    <small>min. value: 1 / max. value: 30</small>
                 <label>
                     large break:
-                    <input id="large-bk-input" type="number" placeholder="15" value="15">
+                    <input id="large-bk-input" type="number" placeholder="15" value="15" min="1" max="60">
                 </label>
+                <small>min. value: 1 / max. value: 60</small>
                 <h5 class="subtitle-settings volume">VOLUMEN</h5>
                 <div>
                     <input class="volume-input" type="range" value="30">

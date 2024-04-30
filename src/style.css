@@ -146,14 +146,18 @@ main {
 
     & .settings-icon {
         color: var(--black);
-        width: 30px;
+        width: 40px;
         cursor: pointer;
         margin-top: 20px;
     }
 
+    & .settings-icon:hover {
+        animation: rotationIcon 2s linear infinite;
+    }
+
     & .settings {
         width: 500px;
-        height: 600px;
+        height: 660px;
         border-radius: 10px;
         background: #74a7aa;
         position: absolute;
@@ -208,7 +212,7 @@ main {
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
 
             & .subtitle-settings {
                 font-size: 2.8rem;
@@ -229,7 +233,12 @@ main {
                     height: 50px;
                     padding-left: 10px;
                     text-align: center;
+                    background: #fff7d5;
                 }
+            }
+
+            & small {
+                font-size: 1rem;
             }
 
             & .apply-settings {
@@ -274,4 +283,9 @@ main {
         opacity: 0;
         scale: 1.2;
     }
+}
+
+@keyframes rotationIcon {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
 }
