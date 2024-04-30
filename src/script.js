@@ -7,7 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     //todo: select user audio from the settings, for now, it's a default audio (?)
     const finishTime = new Audio('../sounds/finish_time.mp3');
     finishTime.volume = 0.3;
-    
+
+    //! Volumen settings
+    let $inputVolume = $('.volume-input');
+    let $showVolume = $('.show-volume');
+
     //! Quick options
     let $quickOptions = $('.quick-options');
     let $pomodoroButton = $('.qo-pomodoro');
@@ -25,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let defaultTimeShortBreak
     let defaultTimeLargeBreak
     getSetInputValue()
-    
+
     //! Pomodoro
     let $title = $('.title');
     let $currentOption = $('.option-selected');
@@ -43,22 +47,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let $settingsButton = $('.settings-icon');
     let $applySettings = $('.apply-settings');
 
-    //! Volumen settings
-    let $inputVolume = $('.volume-input');
-    let $showVolume = $('.show-volume');
 
     //! Blur elements 
     let blueElements = [$title, $quickOptions, $timerContainer, $playButton, $settingsButton];
 
     //? show settings and blur other elements
     $settingsButton.addEventListener('click', () => {
+        if (isRunning) return;
         $('.settings').style.opacity = 1;
-        $('.settings').style.zIndex= 1;
+        $('.settings').style.zIndex = 1;
         blueOrUnblur(blueElements, 'add');
 
         $('.close-settings').addEventListener('click', () => {
             $('.settings').style.opacity = 0;
-            $('.settings').style.zIndex= 0;
+            $('.settings').style.zIndex = 0;
             $applySettings.classList.remove('applied-stg');
             blueOrUnblur(blueElements, 'remove');
         })
@@ -80,11 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
         else if ($('#large-bk-input').value > 60) defaultTimeLargeBreak = 60 * 60
         else defaultTimeLargeBreak = $('#large-bk-input').value * 60;
         $('#large-bk-input').value = defaultTimeLargeBreak / 60;
+
+        if ($inputVolume.value < 0) finishTime.volume = 0;
+        else if ($inputVolume.value > 100) finishTime.volume = 1;
+        else finishTime.volume = $inputVolume.value / 100;
     }
 
     //? change and show the volume of the audio
     $inputVolume.addEventListener('input', () => {
-        finishTime.volume = $inputVolume.value / 100;
         $showVolume.textContent = $inputVolume.value
     });
 
@@ -92,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $applySettings.addEventListener('click', () => {
         getSetInputValue();
         $applySettings.classList.add('applied-stg');
-        resetTimer()
+        resetTimer() //todo: this timer affect too much xd
     });
 
     //$ Quick options
@@ -145,16 +150,16 @@ document.addEventListener('DOMContentLoaded', () => {
     //? Start, pause and reset the timer function
     $playButton.addEventListener('click', () => {
         if ($playButton.textContent === 'PLAY') {
-            $playButton.textContent = 'PAUSE';
-            $playButton.style.backgroundColor = '#458588';
+            $playButton.textContent = 'RUNNING';
+            $playButton.style.backgroundColor = '#cc241d';
+            $playButton.style.opacity= '.8';
+            $playButton.style.color = '#f9f5d7';
             $outerSphere.classList.add('normal-blink');
             startTimer()
-        }else if ($playButton.textContent === 'PAUSE') {
-            pauseTimer()
-            $outerSphere.classList.remove('normal-blink');
-            $playButton.textContent = 'PLAY';
-            $playButton.style.backgroundColor = '#45858896';
-        } else {
+        } else if($playButton.textContent === 'RUNNING') {
+            $playButton.style.cursor = 'not-allowed';
+        }
+        else {
             $playButton.textContent = 'PLAY';
             $playButton.style.backgroundColor = '#45858896';
             $outerSphere.classList.remove('quick-blink');
@@ -171,13 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
         timerInterval = setInterval(updateTimer, 1000);
     }
 
-    //? pauseTimer function
-    function pauseTimer() {
-        clearInterval(timerInterval);
-        $sphere.style.animationPlayState = 'paused';
-
-    }
-
     //? stopTimer function
     function stopTimer() {
         clearInterval(timerInterval);
@@ -187,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $outerSphere.classList.add('quick-blink');
         $outerSphere.classList.remove('normal-blink');
         $playButton.textContent = 'RESET';
+        $playButton.style.opacity= '1';
         $playButton.style.backgroundColor = '#af3a03';
         $playButton.style.color = '#f9f5d7';
     }
@@ -210,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeInTimer()
         cancelTimerInterval()
     }
-    
+
     //? create the timer interval
     const createTimerInterval = () => setInterval(() => finishTime.play(), 6000);
 
